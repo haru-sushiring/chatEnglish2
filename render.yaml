@@ -31,10 +31,6 @@ services:
         sync: false
       - key: DB_PASSWORD
         sync: false
-    disk:
-      name: api-data
-      mountPath: /app/storage
-      sizeGB: 5
 
   # Laravel queue worker
   - type: worker
@@ -61,10 +57,6 @@ services:
         sync: false
       - key: DB_PASSWORD
         sync: false
-    disk:
-      name: worker-data
-      mountPath: /app/storage
-      sizeGB: 1
 
   # Next.js クライアントアプリ
   - type: web
@@ -89,10 +81,6 @@ services:
             envVarKey: RENDER_EXTERNAL_URL
       - key: STRIPE_KEY
         sync: false
-    disk:
-      name: client-data
-      mountPath: /app
-      sizeGB: 2
 
   # MySQL コンテナ（pserv）
   - type: pserv
