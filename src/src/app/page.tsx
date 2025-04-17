@@ -39,6 +39,7 @@ export default function Home() {
   };
 
   useEffect(() => {
+    console.log('NEXT_PUBLIC_API_ROOT:', process.env.NEXT_PUBLIC_API_ROOT);
     const fetchVocabulary = async () => {
       try {
         const res = await vocabularyRepository.index(1); // 仮の user_id = 1
