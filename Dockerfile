@@ -12,10 +12,9 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     nodejs \
-    npm
-
-# Clear cache
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+    npm \
+    nginx \
+    supervisor
 
 # Install PHP extensions
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
@@ -25,6 +24,11 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 # Copy application files
 COPY . /var/www/html
+
+# Copy nginx and supervisord config
+COPY ./docker/web/railway_default.conf /etc/nginx/conf.d/default.conf
+COPY ./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
 WORKDIR /var/www/html/app
 RUN cp .env.example .env
 
@@ -33,16 +37,13 @@ RUN mkdir -p storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache \
     && chown -R www-data:www-data storage bootstrap/cache
 
-# Install project dependencies
-WORKDIR /var/www/html/app
+# Install dependencies
 RUN composer install --no-interaction --no-dev --optimize-autoloader
 RUN npm install && npm run build
 
-# Generate application key
+# Generate app key
 RUN php artisan key:generate
 
-# Expose port
 EXPOSE 8000
 
-# Start server
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"] 
+CMD ["/usr/bin/supervisord"]
