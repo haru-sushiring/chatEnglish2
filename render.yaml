@@ -2,6 +2,7 @@ services:
   # Laravel API サービス
   - type: web
     name: api
+    plan: free
     runtime: docker
     dockerfilePath: docker/php/render_Dockerfile
     dockerContext: .
@@ -38,6 +39,7 @@ services:
   # Laravel queue worker
   - type: worker
     name: container-worker
+    plan: free
     runtime: docker
     dockerfilePath: docker/php/render_Dockerfile
     dockerContext: .
@@ -67,6 +69,7 @@ services:
   # Next.js クライアントアプリ
   - type: web
     name: client
+    plan: free
     runtime: docker
     dockerfilePath: docker/node/render_Dockerfile
     dockerContext: .
