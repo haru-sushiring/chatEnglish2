@@ -1,0 +1,114 @@
+services:
+  # Laravel API サービス
+  - type: web
+    name: api
+    runtime: docker
+    dockerfilePath: docker/php/Dockerfile
+    dockerContext: .
+    buildCommand: cd app && composer install --no-interaction --optimize-autoloader && php artisan config:cache
+    startCommand: cd app && php artisan serve --host=0.0.0.0 --port=8000
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_KEY
+        generateValue: true
+      - key: APP_URL
+        fromService:
+            type: web
+            name: api
+            envVarKey: RENDER_EXTERNAL_URL
+      - key: DB_CONNECTION
+        value: mysql
+      - key: DB_HOST
+        value: mysql
+      - key: DB_PORT
+        value: "3306"
+      - key: DB_DATABASE
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+    disk:
+      name: api-data
+      mountPath: /app/storage
+      sizeGB: 5
+
+  # Laravel queue worker
+  - type: worker
+    name: container-worker
+    runtime: docker
+    dockerfilePath: docker/php/Dockerfile
+    dockerContext: .
+    startCommand: cd app && php artisan queue:work
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: DB_CONNECTION
+        value: mysql
+      - key: DB_HOST
+        value: mysql
+      - key: DB_PORT
+        value: "3306"
+      - key: DB_DATABASE
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+    disk:
+      name: worker-data
+      mountPath: /app/storage
+      sizeGB: 1
+
+  # Next.js クライアントアプリ
+  - type: web
+    name: client
+    runtime: docker
+    dockerfilePath: docker/node/Dockerfile
+    dockerContext: .
+    buildCommand: cd src && npm install && npm run build
+    startCommand: cd src && npm run start
+    envVars:
+      - key: NEXT_PUBLIC_APP_ENV
+        value: production
+      - key: NEXT_PUBLIC_APP_ROOT
+        fromService:
+            type: web
+            name: client
+            envVarKey: RENDER_EXTERNAL_URL
+      - key: NEXT_PUBLIC_API_ROOT
+        fromService:
+            type: web
+            name: api
+            envVarKey: RENDER_EXTERNAL_URL
+      - key: STRIPE_KEY
+        sync: false
+    disk:
+      name: client-data
+      mountPath: /app
+      sizeGB: 2
+
+  # MySQL コンテナ（pserv）
+  - type: pserv
+    name: mysql
+    runtime: docker
+    dockerfilePath: Dockerfile.mysql
+    dockerContext: .
+    disk:
+      name: mysql-data
+      mountPath: /var/lib/mysql
+      sizeGB: 10
+    envVars:
+      - key: MYSQL_ROOT_PASSWORD
+        sync: false
+      - key: MYSQL_DATABASE
+        sync: false
+      - key: MYSQL_USER
+        sync: false
+      - key: MYSQL_PASSWORD
+        sync: false
