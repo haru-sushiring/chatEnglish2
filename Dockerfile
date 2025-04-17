@@ -35,4 +35,4 @@ RUN composer install --no-interaction --no-dev --optimize-autoloader
 # App key will be set via env at runtime, not during build
 EXPOSE 8000
 
-CMD [\"/usr/bin/supervisord\"]
+CMD ["supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
