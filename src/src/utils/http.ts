@@ -1,13 +1,13 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, HttpStatusCode } from 'axios';
 
 const axiosInstance = axios.create({
-  baseURL: window.location.origin === 'https://client-zjom.onrender.com'
+  baseURL: typeof window !== 'undefined' && window.location.origin === 'https://client-zjom.onrender.com' 
     ? 'https://client-zjom.onrender.com'
     : `${process.env.NEXT_PUBLIC_API_ROOT}`,
   headers: {
     Accept: 'application/json',
     'X-Requested-With': 'XMLHttpRequest',
-    'Access-Control-Allow-Origin': window.location.origin === 'https://client-zjom.onrender.com'
+    'Access-Control-Allow-Origin': typeof window !== 'undefined' && window.location.origin === 'https://client-zjom.onrender.com'
       ? 'https://client-zjom.onrender.com'
       : `${process.env.NEXT_PUBLIC_APP_ROOT}`,
     'content-type': 'application/json;charset=utf-8',
