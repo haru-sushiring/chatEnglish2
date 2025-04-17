@@ -25,8 +25,6 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 # Copy application files
 COPY . /var/www/html
-COPY .env.example /var/www/html/.env
-
 WORKDIR /var/www/html/app
 
 # Set permissions
