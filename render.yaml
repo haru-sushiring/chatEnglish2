@@ -85,13 +85,10 @@ services:
   # MySQL コンテナ（pserv）
   - type: pserv
     name: mysql
+    plan: free
     runtime: docker
     dockerfilePath: Dockerfile.mysql
     dockerContext: .
-    disk:
-      name: mysql-data
-      mountPath: /var/lib/mysql
-      sizeGB: 10
     envVars:
       - key: MYSQL_ROOT_PASSWORD
         sync: false
