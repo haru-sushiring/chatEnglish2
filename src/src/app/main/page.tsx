@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { createRoot } from 'react-dom/client';
 
 export default function Home() {
     const [word, setWord] = React.useState('');
@@ -13,7 +12,11 @@ export default function Home() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+            // Laravel CSRFトークンが必要な場合だけ使う
+            // サーバーがRenderでAPI分離されてるなら不要な可能性あり
+            'X-CSRF-TOKEN': typeof document !== 'undefined'
+              ? document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+              : ''
           },
           body: JSON.stringify({
             word,
@@ -50,10 +53,4 @@ export default function Home() {
             </form>
         </div>
     );
-}
-
-const container = document.getElementById('app');
-if (container) {
-  const root = createRoot(container);
-  root.render(<Home />);
 }
