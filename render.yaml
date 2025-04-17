@@ -3,7 +3,7 @@ services:
   - type: web
     name: api
     runtime: docker
-    dockerfilePath: docker/php/Dockerfile
+    dockerfilePath: docker/php/render_Dockerfile
     dockerContext: .
     buildCommand: cd app && composer install --no-interaction --optimize-autoloader && php artisan config:cache
     startCommand: cd app && php artisan serve --host=0.0.0.0 --port=8000
@@ -40,7 +40,7 @@ services:
   - type: worker
     name: container-worker
     runtime: docker
-    dockerfilePath: docker/php/Dockerfile
+    dockerfilePath: docker/php/render_Dockerfile
     dockerContext: .
     startCommand: cd app && php artisan queue:work
     envVars:
@@ -69,7 +69,7 @@ services:
   - type: web
     name: client
     runtime: docker
-    dockerfilePath: docker/node/Dockerfile
+    dockerfilePath: docker/node/render_Dockerfile
     dockerContext: .
     buildCommand: cd src && npm install && npm run build
     startCommand: cd src && npm run start
