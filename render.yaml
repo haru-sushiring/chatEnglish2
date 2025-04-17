@@ -3,9 +3,8 @@ services:
   - type: web
     name: web
     runtime: docker
-    dockerfilePath: ./docker/web/Dockerfile
+    dockerfile: docker/web/Dockerfile
     dockerContext: .
-    buildCommand: docker build -t web -f ./docker/web/Dockerfile .
     startCommand: nginx -g "daemon off;"
     envVars:
       - key: DOMAINS
@@ -22,11 +21,9 @@ services:
   - type: web
     name: api
     runtime: docker
-    dockerfilePath: ./docker/php/Dockerfile
+    dockerfile: docker/php/Dockerfile
     dockerContext: .
-    buildCommand: |
-      docker build -t api -f ./docker/php/Dockerfile .
-      cd app && composer install --no-interaction --optimize-autoloader
+    buildCommand: cd app && composer install --no-interaction --optimize-autoloader
     startCommand: php-fpm
     envVars:
       - key: APP_ENV
@@ -70,9 +67,8 @@ services:
   - type: worker
     name: container-worker
     runtime: docker
-    dockerfilePath: ./docker/php/Dockerfile
+    dockerfile: docker/php/Dockerfile
     dockerContext: .
-    buildCommand: docker build -t worker -f ./docker/php/Dockerfile .
     startCommand: php artisan queue:listen
     envVars:
       - key: APP_ENV
@@ -103,11 +99,9 @@ services:
   - type: web
     name: client
     runtime: docker
-    dockerfilePath: ./docker/node/Dockerfile
+    dockerfile: docker/node/Dockerfile
     dockerContext: .
-    buildCommand: |
-      docker build -t client -f ./docker/node/Dockerfile .
-      cd src && npm install && npm run build
+    buildCommand: cd src && npm install && npm run build
     startCommand: cd src && npm start
     envVars:
       - key: NEXT_PUBLIC_APP_ENV
@@ -134,7 +128,7 @@ services:
     name: mysql
     plan: standard
     runtime: docker
-    dockerfilePath: Dockerfile.mysql
+    dockerfile: Dockerfile.mysql
     dockerContext: .
     disk:
       name: mysql-data
